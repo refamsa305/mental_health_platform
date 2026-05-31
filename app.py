@@ -302,7 +302,7 @@ if menu_pilihan == "📊 1. Analisis Dataset (Dashboard)":
             df_grouped = df_clean.groupby('Daily_Screen_Time_Hours')[['GAD_7_Score', 'PHQ_9_Score']].mean().reset_index()
             fig1 = px.line(df_grouped, x='Daily_Screen_Time_Hours', y=['GAD_7_Score', 'PHQ_9_Score'],
                            labels={'value': 'Rata-rata Skor', 'Daily_Screen_Time_Hours': 'Waktu Layar (Jam)'})
-            fig1.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
+            fig1.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10), font=dict(color='#000000'))
             st.plotly_chart(fig1, use_container_width=True)
     with col1_e:
         st.markdown(
@@ -339,7 +339,7 @@ if menu_pilihan == "📊 1. Analisis Dataset (Dashboard)":
         )
 
 # --- KOMPONEN 2: MESIN PREDIKSI PKL + INPUT TANGGAL ---
-elif menu_pilihan == "🤖 2. Prediksi Skor GAD-7 & PHQ-9":
+elif menu_pilihan == "2. Prediksi Skor GAD-7 & PHQ-9":
     st.title("🤖 Kalkulator Prediksi Skor Klinis")
     st.write("Masukkan parameter harian Anda beserta tanggal pencatatan untuk memprediksi tingkat indikasi kecemasan dan depresi.")
     st.write("")
@@ -407,7 +407,7 @@ elif menu_pilihan == "🤖 2. Prediksi Skor GAD-7 & PHQ-9":
         st.error("❌ Berkas 'model_gad7.pkl' tidak ditemukan. Jalankan 'train_model.py' terlebih dahulu.")
 
 # --- KOMPONEN 3: EKSEKUSI 5 PILAR SEKTOR LAPORAN KESEHATAN MENTAL (FIX ONLINE) ---
-elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
+elif menu_pilihan == "3. Laporan Kesehatan Mental Saya":
     st.title("📋 Rekam Medis & Laporan Dashboard Kesehatan")
     st.write("Halaman pelacakan klinis terintegrasi berdasarkan data log aktivitas digital Anda.")
     st.write("")
@@ -445,7 +445,7 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
         with col_l2_v:
             with st.container(border=True):
                 fig_l2 = px.line(user_df, x='tanggal', y=['skor_gad', 'skor_phq'], markers=True, labels={'value': 'Nilai Skor', 'tanggal': 'Tanggal Evaluasi'})
-                fig_l2.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
+                fig_l2.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10), font=dict(color='#000000'))
                 st.plotly_chart(fig_l2, use_container_width=True)
         with col_l2_e:
             st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Interpretasi Grafik Kronologis</h4><p style="color: #1565C0 !important; line-height: 1.6;"><b>Melacak Dinamika Emosi:</b> Grafik garis kontinuitas di samping memetakan naik-turunnya kondisi emosional Anda berdasarkan data seketika dari cloud Supabase.</p></div>', unsafe_allow_html=True)
@@ -458,7 +458,7 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
             with st.container(border=True):
                 trigger_df = user_df.groupby('social_compare')['skor_gad'].mean().reset_index()
                 fig_l3 = px.bar(trigger_df, x='social_compare', y='skor_gad', color='social_compare', labels={'skor_gad': 'Rata-rata Skor GAD-7'})
-                fig_l3.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
+                fig_l3.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10), font=dict(color='#000000'))
                 st.plotly_chart(fig_l3, use_container_width=True)
         with col_l3_e:
             st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Analisis Faktor Pemicu</h4><p style="color: #1565C0 !important; line-height: 1.6;"><b>Dampak Psikologis Insecure:</b> Diagram ini membuktikan secara nyata seberapa besar rata-rata kecemasan melesat naik saat Anda terjebak membandingkan diri di lini masa media sosial.</p></div>', unsafe_allow_html=True)
@@ -470,7 +470,7 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
         with col_l4_v:
             with st.container(border=True):
                 fig_l4 = px.bar(user_df, x='tanggal', y=['screen_time', 'waktu_tidur'], barmode='group')
-                fig_l4.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
+                fig_l4.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10), font=dict(color='#000000'))
                 st.plotly_chart(fig_l4, use_container_width=True)
         with col_l4_e:
             avg_screen = round(user_df['screen_time'].mean(), 1)
@@ -485,7 +485,7 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
             with st.container(border=True):
                 platform_df = user_df.groupby('platform')['skor_phq'].mean().reset_index()
                 fig_l5 = px.bar(platform_df, x='platform', y='skor_phq', color='platform')
-                fig_l5.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
+                fig_l5.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10), font=dict(color='#000000'))
                 st.plotly_chart(fig_l5, use_container_width=True)
         with col_l5_e:
             max_toxic = platform_df.sort_values(by='skor_phq', ascending=False).iloc[0]['platform'] if not platform_df.empty else "Belum Diketahui"
