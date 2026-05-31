@@ -212,7 +212,7 @@ if not st.session_state['logged_in']:
         st.write("")
         logo_b64 = get_base64_of_bin_file('bg2.png')
         if logo_b64:
-            st.markdown(f'<div style="text-align: center; margin-bottom: 10px;"><img src="data:image/png;base64,{logo_b64}" width="130"></div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="text-align: center; margin-bottom: 10px;"><img src="data:image/png;base64,{logo_b64}" width="200"></div>', unsafe_allow_html=True)
         st.markdown("<h1 style='text-align: center; color: #FFFFFF !important;'>🧠 MindMetrics</h1>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; font-size: 1.1rem; color: #E2E8F0 !important; font-weight: 600;'>Platform Analisis Dampak Media Sosial terhadap Kesehatan Mental</p>", unsafe_allow_html=True)
         
