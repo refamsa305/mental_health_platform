@@ -179,10 +179,10 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 3. KONEKSI REAL-TIME SUPABASE CLOUD
+# 3. KONEKSI REAL-TIME SUPABASE CLOUD (BERSIH & AMAN)
 # ==========================================
-SUPABASE_URL = "https://cqmlvarkzhejzxbnwtfe.supabase.co/rest/v1/"
-SUPABASE_KEY = "sb_publishable_YBD-kczdlV9QE_S6JbsngQ_w5Y0D8hc"
+SUPABASE_URL = st.secrets["SUPABASE_URL"]
+SUPABASE_KEY = st.secrets["SUPABASE_KEY"]
 
 @st.cache_resource
 def init_supabase():
@@ -395,7 +395,6 @@ elif menu_pilihan == "🤖 2. Prediksi Skor GAD-7 & PHQ-9":
                 "skor_gad": pred_gad, "keparahan_gad": g_sev,
                 "skor_phq": pred_phq, "keparahan_phq": p_sev, "platform": platform
             }
-            # Menggunakan .from_() agar sinkron dengan Supabase terbaru
             supabase.from_("user_reports").insert(report_payload).execute()
             st.balloons()
             st.info(f"✅ Data log tanggal {input_date} sukses disimpan permanen ke Cloud Supabase.")
