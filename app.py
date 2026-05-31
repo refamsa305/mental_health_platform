@@ -4,11 +4,7 @@ import numpy as np
 import pickle
 import plotly.express as px
 import base64
-import os
-from dotenv import load_dotenv
 from supabase import create_client, Client
-
-load_dotenv()
 
 # ==========================================
 # 1. INTEGRASI BACKGROUND GAMBAR KUSTOM
@@ -39,6 +35,7 @@ def set_png_as_page_bg(png_file):
     else:
         st.markdown("<style>.stApp { background-color: #F8F9FA; }</style>", unsafe_allow_html=True)
 
+# Memanggil gambar background Anda
 set_png_as_page_bg('bg3.png')
 
 # ==========================================
@@ -48,7 +45,13 @@ st.set_page_config(page_title="MindMetrics Platform", layout="wide", initial_sid
 
 st.markdown("""
     <style>
-    p, span, label, .stMarkdown, .stText { color: #2F3640 !important; font-weight: 500 !important; }
+    /* Pengaturan teks utama agar kontras tinggi */
+    p, span, label, .stMarkdown, .stText {
+        color: #2F3640 !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Memaksa layout form masuk */
     div[data-testid="stForm"] {
         background-color: rgba(255, 255, 255, 0.96) !important;
         border: 1px solid #E4E7EB !important;
@@ -56,12 +59,16 @@ st.markdown("""
         padding: 30px !important;
         box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08) !important;
     }
+    
+    /* Penggantian border default kontainer streamlit */
     div[data-testid="stVerticalBlockBorderWrapper"] {
         border-radius: 14px !important;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03) !important;
         margin-bottom: 20px !important;
         background-color: #FFFFFF !important;
     }
+    
+    /* Tombol kustom aplikasi utama */
     div.stButton > button:first-child, div.stFormSubmitButton > button {
         background-color: #2196F3 !important;
         color: #FFFFFF !important;
@@ -71,36 +78,111 @@ st.markdown("""
         font-weight: 600 !important;
         width: 100% !important;
     }
-    div.stButton > button:first-child:hover, div.stFormSubmitButton > button:hover { background-color: #1976D2 !important; }
+    div.stButton > button:first-child:hover, div.stFormSubmitButton > button:hover {
+        background-color: #1976D2 !important;
+    }
+    
     h1 { color: #0B3C5D !important; font-weight: 800 !important; }
     h2, h3 { color: #1D2731 !important; font-weight: 700 !important; }
     h4 { color: #1565C0 !important; font-weight: 700 !important; margin-top: 0px !important; }
-    div[data-testid="stMetricValue"] { font-size: 2rem !important; font-weight: 700 !important; }
-    [data-testid="stSidebar"] { background-color: #1E293B !important; border-right: 1px solid #334155 !important; }
+    
+    /* Pengingat Metrik Besar */
+    div[data-testid="stMetricValue"] {
+        font-size: 2rem !important;
+        font-weight: 700 !important;
+    }
+
+    /* Background & Border Sidebar */
+    [data-testid="stSidebar"] {
+        background-color: #1E293B !important;
+        border-right: 1px solid #334155 !important;
+    }
+
+    /* Pembungkus Konten Profil */
     .sidebar-profile-box {
         background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%);
-        padding: 20px; border-radius: 12px; border: 1px solid #2563EB; margin-bottom: 25px;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #2563EB;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
-    .profile-greeting { color: #94A3B8 !important; font-size: 0.85rem !important; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 !important; }
-    .profile-name { color: #FFFFFF !important; font-size: 1.25rem !important; font-weight: 700 !important; margin-top: 4px !important; }
-    [data-testid="stSidebar"] .stRadio > label { color: #94A3B8 !important; font-size: 0.85rem !important; text-transform: uppercase; font-weight: 600 !important; }
-    [data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] p { color: #E2E8F0 !important; }
-    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label { background-color: #334155 !important; padding: 12px 16px !important; border-radius: 8px !important; margin-bottom: 8px !important; border: 1px solid #475569 !important; width: 100%; }
-    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label:hover { background-color: #475569 !important; border-color: #3B82F6 !important; }
-    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] [data-checked="true"] label { background: linear-gradient(90deg, #2563EB 0%, #1D4ED8 100%) !important; border-color: #3B82F6 !important; }
-    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] [data-checked="true"] label p { color: #FFFFFF !important; font-weight: 600 !important; }
-    div.sidebar-logout-container div.stButton > button { background-color: transparent !important; color: #F1F5F9 !important; border: 1px solid #475569 !important; border-radius: 8px !important; }
-    div.sidebar-logout-container div.stButton > button:hover { background-color: #EF4444 !important; border-color: #EF4444 !important; }
-    .sidebar-divider { border-top: 1px solid #334155; margin: 20px 0; }
+    .sidebar-profile-box p {
+        margin: 0 !important;
+    }
+    .profile-greeting {
+        color: #94A3B8 !important;
+        font-size: 0.85rem !important;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+    }
+    .profile-name {
+        color: #FFFFFF !important;
+        font-size: 1.25rem !important;
+        font-weight: 700 !important;
+        margin-top: 4px !important;
+    }
+
+    /* Kustomisasi Menu Navigasi List Sidebar */
+    [data-testid="stSidebar"] .stRadio > label {
+        color: #94A3B8 !important;
+        font-size: 0.85rem !important;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 10px;
+        font-weight: 600 !important;
+    }
+    [data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] p {
+        color: #E2E8F0 !important;
+    }
+    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label {
+        background-color: #334155 !important;
+        padding: 12px 16px !important;
+        border-radius: 8px !important;
+        margin-bottom: 8px !important;
+        border: 1px solid #475569 !important;
+        width: 100%;
+    }
+    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label:hover {
+        background-color: #475569 !important;
+        border-color: #3B82F6 !important;
+        cursor: pointer;
+    }
+    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] [data-checked="true"] label {
+        background: linear-gradient(90deg, #2563EB 0%, #1D4ED8 100%) !important;
+        border-color: #3B82F6 !important;
+        box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+    }
+    [data-testid="stSidebar"] .stRadio div[role="radiogroup"] [data-checked="true"] label p {
+        color: #FFFFFF !important;
+        font-weight: 600 !important;
+    }
+
+    /* Tombol Keluar Premium */
+    div.sidebar-logout-container div.stButton > button {
+        background-color: transparent !important;
+        color: #F1F5F9 !important;
+        border: 1px solid #475569 !important;
+        border-radius: 8px !important;
+        padding: 10px 20px !important;
+    }
+    div.sidebar-logout-container div.stButton > button:hover {
+        background-color: #EF4444 !important;
+        color: #FFFFFF !important;
+        border-color: #EF4444 !important;
+    }
+    .sidebar-divider {
+        border-top: 1px solid #334155;
+        margin: 20px 0;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================
-# 3. KONEKSI REAL-TIME SUPABASE DB CLOUD
+# 3. KONEKSI REAL-TIME SUPABASE CLOUD
 # ==========================================
-# Ambil kredensial secara aman (Mendukung lokal & Streamlit Secrets saat online)
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+SUPABASE_URL = "https://cqmlvarkzhejzxbnwtfe.supabase.co/rest/v1/"
+SUPABASE_KEY = "sb_publishable_YBD-kczdlV9QE_S6JbsngQ_w5Y0D8hc"
 
 @st.cache_resource
 def init_supabase():
@@ -108,13 +190,12 @@ def init_supabase():
 
 supabase = init_supabase()
 
-# Inisialisasi Session State
 if 'logged_in' not in st.session_state: st.session_state['logged_in'] = False
 if 'username' not in st.session_state: st.session_state['username'] = ""
 if 'full_name' not in st.session_state: st.session_state['full_name'] = ""
 
 # ==========================================
-# 4. HALAMAN GERBANG MASUK
+# 4. HALAMAN GERBANG MASUK (LOGIN & REGISTER)
 # ==========================================
 if not st.session_state['logged_in']:
     st.markdown("""
@@ -141,12 +222,12 @@ if not st.session_state['logged_in']:
                 login_p = st.text_input("Kata Sandi", type="password", placeholder="Masukkan kata sandi")
                 submit_login = st.form_submit_button("Masuk Sekarang")
             if submit_login:
-                # Cek ke tabel 'users' di Supabase Cloud
-                res = supabase.table("users").select("*").eq("username", login_u).eq("password", login_p).execute()
+                # Perbaikan menggunakan .from_() untuk versi terbaru
+                res = supabase.from_("users").select("*").eq("username", login_u).eq("password", login_p).execute()
                 if len(res.data) > 0:
                     st.session_state['logged_in'] = True
                     st.session_state['username'] = login_u
-                    st.session_state['full_name'] = res.data[0]["full_name"] if "full_name" in res.data[0] else login_u
+                    st.session_state['full_name'] = res.data[0]["full_name"]
                     st.rerun()
                 else:
                     st.error("❌ Username atau Kata Sandi salah!")
@@ -162,13 +243,11 @@ if not st.session_state['logged_in']:
                 if reg_name.strip() == "" or reg_u.strip() == "" or reg_p.strip() == "":
                     st.error("❌ Semua kolom wajib diisi!")
                 else:
-                    # Cek ketersediaan username
-                    check_user = supabase.table("users").select("*").eq("username", reg_u).execute()
+                    check_user = supabase.from_("users").select("*").eq("username", reg_u).execute()
                     if len(check_user.data) > 0:
-                        st.error("❌ Username sudah terpakai. Coba yang lain.")
+                        st.error("❌ Username sudah terpakai.")
                     else:
-                        # Insert data baru ke Supabase Cloud
-                        supabase.table("users").insert({"username": reg_u, "password": reg_p, "full_name": reg_name}).execute()
+                        supabase.from_("users").insert({"username": reg_u, "password": reg_p, "full_name": reg_name}).execute()
                         st.success(f"🎉 Akun {reg_name} sukses terdaftar! Silakan pindah ke tab Login.")
     st.stop()
 
@@ -182,7 +261,7 @@ st.sidebar.markdown(f"""
     </div>
 """, unsafe_allow_html=True)
 
-menu_pilihan = st.sidebar.radio("Navigasi Menu:", [
+menu_pilihan = st.sidebar.radio("Navigasi Sistem:", [
     "📊 1. Analisis Dataset (Dashboard)", 
     "🤖 2. Prediksi Skor GAD-7 & PHQ-9", 
     "📋 3. Laporan Kesehatan Mental Saya"
@@ -191,7 +270,7 @@ menu_pilihan = st.sidebar.radio("Navigasi Menu:", [
 st.sidebar.markdown('<div class="sidebar-divider"></div>', unsafe_allow_html=True)
 with st.sidebar.container():
     st.markdown('<div class="sidebar-logout-container">', unsafe_allow_html=True)
-    if st.sidebar.button("🚪 Keluar"):
+    if st.sidebar.button("🚪 Keluar Aplikasi"):
         st.session_state['logged_in'] = False
         st.session_state['username'] = ""
         st.session_state['full_name'] = ""
@@ -204,10 +283,10 @@ def load_data():
 df_clean = load_data()
 
 # ==========================================
-# 6. EKSEKUSI HALAMAN NAVIGASI
+# 6. EKSEKUSI TIAP HALAMAN KONTEN
 # ==========================================
 
-# --- MENU 1: DASHBOARD ANALISIS DATASET ---
+# --- KOMPONEN 1: DASHBOARD MAKRO ---
 if menu_pilihan == "📊 1. Analisis Dataset (Dashboard)":
     st.title("📊 Dashboard Analisis Risiko Media Sosial")
     st.write("Eksplorasi visualisasi data mengenai pengaruh aktivitas digital terhadap indikasi kecemasan dan depresi.")
@@ -223,17 +302,40 @@ if menu_pilihan == "📊 1. Analisis Dataset (Dashboard)":
             fig1.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
             st.plotly_chart(fig1, use_container_width=True)
     with col1_e:
-        st.markdown("""
+        st.markdown(
+            """
             <div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;">
                 <h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Interpretasi & Analisis Data</h4>
                 <p style="color: #1565C0 !important; line-height: 1.6;">
                     <b>Korelasi Positif Kuat:</b> Grafik di samping menunjukkan bahwa semakin tinggi <i>Daily Screen Time</i>, rata-rata skor kecemasan (GAD-7) dan depresi (PHQ-9) cenderung merangkak naik secara konsisten.<br><br>
-                    <b>Titik Kritis (Threshold):</b> Pengguna dengan waktu layar di atas <b>6-8 jam per hari</b> menunjukkan lonjakan skor emosional yang signifikan dibanding kelompok di bawah 3 jam.
+                    <b>Titik Kritis (Threshold):</b> Pengguna yang menghabiskan waktu layar di atas <b>6-8 jam per hari</b> menunjukkan lonjakan skor emosional yang signifikan dibanding kelompok di bawah 3 jam.
                 </p>
             </div>
-        """, unsafe_allow_html=True)
+            """, unsafe_allow_html=True
+        )
 
-# --- MENU 2: ALAT PREDIKSI PKL ---
+    st.write("")
+    st.markdown("### 📊 Analisis Pola Istirahat Berdasarkan Aktivitas")
+    kolom_grafik, kolom_teks = st.columns(2)
+    with kolom_grafik:
+        with st.container(border=True):
+            st.markdown("#### **Grafik Durasi Tidur**")
+            fig_pie = px.pie(df_clean, names='Activity_Type', values='Sleep_Duration_Hours', title="Kontribusi Total Jam Tidur Berdasarkan Tipe Aktivitas")
+            fig_pie.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF')
+            st.plotly_chart(fig_pie, use_container_width=True)
+    with kolom_teks:
+        st.markdown(
+            """
+            <div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;">
+                <h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Analisis Pola Tidur</h4>
+                <p style="color: #1565C0 !important; line-height: 1.6;">
+                    <b>Informasi Tambahan:</b> Melalui grafik lingkaran di samping, kita dapat melihat distribusi total jam istirahat antara pengguna aktif (Active) dan pengguna pasif (Passive) di media sosial.
+                </p>
+            </div>
+            """, unsafe_allow_html=True
+        )
+
+# --- KOMPONEN 2: MESIN PREDIKSI PKL + INPUT TANGGAL ---
 elif menu_pilihan == "🤖 2. Prediksi Skor GAD-7 & PHQ-9":
     st.title("🤖 Kalkulator Prediksi Skor Klinis")
     st.write("Masukkan parameter harian Anda beserta tanggal pencatatan untuk memprediksi tingkat indikasi kecemasan dan depresi.")
@@ -247,6 +349,7 @@ elif menu_pilihan == "🤖 2. Prediksi Skor GAD-7 & PHQ-9":
             st.markdown("### 📄 Pengisian Log Kuesioner Harian")
             input_date = st.date_input("Pilih Tanggal Log Hari Ini:", value=pd.Timestamp.now().date())
             st.markdown("---")
+            
             col_inp1, col_inp2 = st.columns(2)
             with col_inp1:
                 age = st.number_input("Berapa Umur Anda?", min_value=12, max_value=80, value=20)
@@ -282,10 +385,9 @@ elif menu_pilihan == "🤖 2. Prediksi Skor GAD-7 & PHQ-9":
             
             st.success("🎯 Hasil Prediksi Berhasil Dihitung!")
             res_c1, res_c2 = st.columns(2)
-            with res_c1: st.metric(label="Prediksi Skor GAD-7", value=f"{pred_gad} / 21", delta=g_sev, delta_color="inverse")
-            with res_c2: st.metric(label="Prediksi Skor PHQ-9", value=f"{pred_phq} / 27", delta=p_sev, delta_color="inverse")
+            with res_c1: st.metric(label="Prediksi Skor GAD-7 (Kecemasan)", value=f"{pred_gad} / 21", delta=g_sev, delta_color="inverse")
+            with res_c2: st.metric(label="Prediksi Skor PHQ-9 (Depresi)", value=f"{pred_phq} / 27", delta=p_sev, delta_color="inverse")
                 
-            # KIRIM DATA REAL-TIME KE SUPABASE CLOUD
             report_payload = {
                 "username": st.session_state['username'], "tanggal": str(input_date),
                 "screen_time": screen_time, "waktu_tidur": sleep_duration,
@@ -293,37 +395,47 @@ elif menu_pilihan == "🤖 2. Prediksi Skor GAD-7 & PHQ-9":
                 "skor_gad": pred_gad, "keparahan_gad": g_sev,
                 "skor_phq": pred_phq, "keparahan_phq": p_sev, "platform": platform
             }
-            supabase.table("user_reports").insert(report_payload).execute()
+            # Perbaikan krusial menggunakan .from_() agar tidak memicu AttributeError
+            supabase.from_("user_reports").insert(report_payload).execute()
             st.balloons()
-            st.info(f"✅ Laporan tanggal {input_date} berhasil tersimpan permanen di cloud Supabase!")
+            st.info(f"✅ Data log tanggal {input_date} sukses disimpan permanen ke Cloud Supabase.")
 
     except FileNotFoundError:
-        st.error("❌ Berkas 'model_gad7.pkl' tidak ditemukan.")
+        st.error("❌ Berkas 'model_gad7.pkl' tidak ditemukan. Jalankan 'train_model.py' terlebih dahulu.")
 
-# --- MENU 3: LAPORAN 5 PILAR (REAL-TIME SUPABASE) ---
+# --- KOMPONEN 3: EKSEKUSI 5 PILAR SEKTOR LAPORAN KESEHATAN MENTAL ---
 elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
     st.title("📋 Rekam Medis & Laporan Dashboard Kesehatan")
-    st.write("Halaman pelacakan klinis terintegrasi berdasarkan akumulasi data log aktivitas digital Anda.")
+    st.write("Halaman pelacakan klinis terintegrasi berdasarkan data log aktivitas digital Anda.")
     st.write("")
 
-    # Ambil riwayat langsung dari tabel Supabase Cloud
-    res_reports = supabase.table("user_reports").select("*").eq("username", st.session_state['username']).execute()
+    # Perbaikan menarik data riwayat menggunakan .from_() kustom v2
+    res_reports = supabase.from_("user_reports").select("*").eq("username", st.session_state['username']).execute()
     
     if len(res_reports.data) > 0:
         user_df = pd.DataFrame(res_reports.data)
         user_df['tanggal'] = pd.to_datetime(user_df['tanggal'])
         user_df = user_df.sort_values(by='tanggal')
+        
         last_record = user_df.iloc[-1]
 
-        # 1. Ringkasan Klinis
+        # 📌 PILAR 1: RINGKASAN STATUS KONDISI KLINIS TERBARU
         st.markdown("### 🗂️ 1. Ringkasan Status Kesehatan Mental Terakhir")
         with st.container(border=True):
             stat_c1, stat_c2, stat_c3 = st.columns(3)
             with stat_c1: st.metric(label="Tanggal Pengujian Terakhir", value=last_record['tanggal'].strftime('%Y-%m-%d'))
             with stat_c2: st.metric(label="Tingkat Kecemasan (GAD-7)", value=f"{last_record['skor_gad']} / 21", delta=last_record['keparahan_gad'], delta_color="inverse")
             with stat_c3: st.metric(label="Tingkat Depresi (PHQ-9)", value=f"{last_record['skor_phq']} / 27", delta=last_record['keparahan_phq'], delta_color="inverse")
+            
+            st.write("")
+            if "Severe" in [last_record['keparahan_gad'], last_record['keparahan_phq']] or "Moderately Severe" in last_record['keparahan_phq']:
+                st.error("🚨 **Rekomendasi Klinis:** Skor Anda berada di zona kritis. Kami sangat menyarankan Anda untuk segera mengambil jeda total dari media sosial (*Digital Detox*) atau menjadwalkan sesi konsultasi dengan psikolog profesional.")
+            elif "Moderate" in [last_record['keparahan_gad'], last_record['keparahan_phq']]:
+                st.warning("⚠️ **Rekomendasi Klinis:** Gejala kecemasan/depresi Anda berada di tingkat sedang. Cobalah batasi screen time maksimal 2 jam per hari.")
+            else:
+                st.success("🌱 **Rekomendasi Klinis:** Kondisi psikologis Anda saat ini relatif stabil dan aman. Tetap pertahankan kesadaran (*mindfulness*) dalam mengonsumsi gawai digital.")
 
-        # 2. Tren Temporal
+        # 📌 PILAR 2: PELACAKAN TREN TEMPORAL (TIME-SERIES)
         st.write("")
         st.markdown("### 📈 2. Pelacakan Tren Fluktuasi Skor Mental dari Hari ke Hari")
         col_l2_v, col_l2_e = st.columns(2)
@@ -333,22 +445,22 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
                 fig_l2.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
                 st.plotly_chart(fig_l2, use_container_width=True)
         with col_l2_e:
-            st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Interpretasi Grafik Kronologis</h4><p style="color: #1565C0 !important; line-height: 1.6;">Melacak dinamika emosi secara berkelanjutan berdasarkan data historis Supabase.</p></div>', unsafe_allow_html=True)
+            st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Interpretasi Grafik Kronologis</h4><p style="color: #1565C0 !important; line-height: 1.6;"><b>Melacak Dinamika Emosi:</b> Grafik garis kontinuitas di samping memetakan naik-turunnya kondisi emosional Anda berdasarkan data seketika dari cloud Supabase.</p></div>', unsafe_allow_html=True)
 
-        # 3. Analisis Akar Masalah
+        # 📌 PILAR 3: ANALISIS AKAR MASALAH (SOCIAL COMPARISON TRIGGER)
         st.write("")
         st.markdown("### 🎯 3. Analisis Dampak Insecure / Membandingkan Diri")
         col_l3_v, col_l3_e = st.columns(2)
         with col_l3_v:
             with st.container(border=True):
                 trigger_df = user_df.groupby('social_compare')['skor_gad'].mean().reset_index()
-                fig_l3 = px.bar(trigger_df, x='social_compare', y='skor_gad', color='social_compare', labels={'skor_gad': 'Rata-rata GAD-7'})
+                fig_l3 = px.bar(trigger_df, x='social_compare', y='skor_gad', color='social_compare', labels={'skor_gad': 'Rata-rata Skor GAD-7'})
                 fig_l3.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
                 st.plotly_chart(fig_l3, use_container_width=True)
         with col_l3_e:
-            st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Analisis Akar Masalah</h4><p style="color: #1565C0 !important; line-height: 1.6;">Melihat dampak nyata kebiasaan membandingkan diri di media sosial terhadap rata-rata kecemasan Anda.</p></div>', unsafe_allow_html=True)
+            st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Analisis Faktor Pemicu</h4><p style="color: #1565C0 !important; line-height: 1.6;"><b>Dampak Psikologis Insecure:</b> Diagram ini membuktikan secara nyata seberapa besar rata-rata kecemasan melesat naik saat Anda terjebak membandingkan diri di lini masa media sosial.</p></div>', unsafe_allow_html=True)
 
-        # 4. Evaluasi Habit
+        # 📌 PILAR 4: EVALUASI HABIT (SCREEN TIME VS TIDUR)
         st.write("")
         st.markdown("### ⏱️ 4. Pengaruh Waktu Layar (Screen Time) terhadap Durasi Tidur")
         col_l4_v, col_l4_e = st.columns(2)
@@ -358,9 +470,11 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
                 fig_l4.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
                 st.plotly_chart(fig_l4, use_container_width=True)
         with col_l4_e:
-            st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Analisis Dampak Gaya Hidup</h4><p style="color: #1565C0 !important; line-height: 1.6;">Memantau apakah tingginya screen time memotong durasi istirahat tidur malam Anda.</p></div>', unsafe_allow_html=True)
+            avg_screen = round(user_df['screen_time'].mean(), 1)
+            avg_sleep = round(user_df['waktu_tidur'].mean(), 1)
+            st.markdown(f'<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Analisis Dampak Gaya Hidup</h4><p style="color: #1565C0 !important; line-height: 1.6;"><b>Korelasi Kebiasaan Istirahat:</b> Saat ini rata-rata screen time harian Anda berada di angka <b>{avg_screen} Jam</b> dengan durasi tidur <b>{avg_sleep} Jam</b> harian. Menjaga keseimbangan kedua variabel ini adalah kunci kestabilan emosi.</p></div>', unsafe_allow_html=True)
 
-        # 5. Risiko per Platform
+        # 📌 PILAR 5: PROFIL RISIKO PER PLATFORM MEDSOS
         st.write("")
         st.markdown("### 🏛️ 5. Pemetaan Profil Risiko Gangguan Depresi per Platform")
         col_l5_v, col_l5_e = st.columns(2)
@@ -371,7 +485,24 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
                 fig_l5.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
                 st.plotly_chart(fig_l5, use_container_width=True)
         with col_l5_e:
-            st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Deteksi Ekosistem Berisiko</h4><p style="color: #1565C0 !important; line-height: 1.6;">Menemukan platform media sosial mana yang secara statistik memberikan dampak beban pikiran tertinggi.</p></div>', unsafe_allow_html=True)
+            max_toxic = platform_df.sort_values(by='skor_phq', ascending=False).iloc[0]['platform'] if not platform_df.empty else "Belum Diketahui"
+            st.markdown(f'<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Deteksi Ekosistem Berisiko</h4><p style="color: #1565C0 !important; line-height: 1.6;"><b>Identifikasi Dampak Algoritma:</b> Berdasarkan riwayat data log Anda, ekosistem pada platform <b>{max_toxic}</b> memicu kecenderungan rata-rata skor depresi tertinggi dibandingkan platform lainnya.</p></div>', unsafe_allow_html=True)
+
+        # DETAIL TABEL LOG REKAM MEDIS HISTORIS
+        st.write("")
+        st.markdown("### 🗃️ Riwayat Log Rekam Medis Digital Lengkap")
+        with st.container(border=True):
+            display_df = user_df[['tanggal', 'skor_gad', 'keparahan_gad', 'skor_phq', 'keparahan_phq', 'screen_time', 'waktu_tidur', 'platform']].copy()
+            display_df['tanggal'] = display_df['tanggal'].dt.strftime('%Y-%m-%d')
+            display_df.columns = ['Tanggal Evaluasi', 'Skor GAD-7', 'Kondisi Kecemasan', 'Skor PHQ-9', 'Kondisi Depresi', 'Waktu Layar (Jam)', 'Tidur (Jam)', 'Platform Terlama']
+            st.dataframe(display_df, use_container_width=True, hide_index=True)
 
     else:
-        st.markdown('<div style="background-color: rgba(255,255,255,0.92); border: 2px dashed #7F8C8D; padding: 40px; border-radius: 14px; text-align: center;"><h3 style="color: #7F8C8D !important;">Belum Ada Riwayat Laporan</h3><p style="color: #7F8C8D !important;">Silakan lakukan pengisian kuesioner terlebih dahulu di menu nomor 2.</p></div>', unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div style="background-color: rgba(255,255,255,0.92); border: 2px dashed #7F8C8D; padding: 40px; border-radius: 14px; text-align: center;">
+                <h3 style="color: #7F8C8D !important;">Belum Ada Riwayat Laporan Terbaca</h3>
+                <p style="color: #7F8C8D !important;">Sistem mendeteksi profil Anda belum pernah melakukan pengisian kuesioner harian.<br>Silakan berpindah ke menu <b>🤖 2. Prediksi Skor GAD-7 & PHQ-9</b> terlebih dahulu untuk menghitung prediksi dan membuat rekam laporan pertama Anda!</p>
+            </div>
+            """, unsafe_allow_html=True
+        )
