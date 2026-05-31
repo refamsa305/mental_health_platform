@@ -9,7 +9,7 @@ from supabase import create_client, Client
 # ==========================================
 # 1. PENGATURAN HALAMAN (Wajib di Paling Atas Perintah Streamlit)
 # ==========================================
-st.set_page_config(page_title="MindMetrics Platform", layout="wide", initial_sidebar_state="expanded")
+st.set_page_config(page_title="HiHealth Platform", layout="wide", initial_sidebar_state="expanded")
 
 # ==========================================
 # 2. INTEGRASI BACKGROUND GAMBAR KUSTOM
@@ -220,7 +220,6 @@ if not st.session_state['logged_in']:
         logo_b64 = get_base64_of_bin_file('bg2.png')
         if logo_b64:
             st.markdown(f'<div style="text-align: center; margin-bottom: 10px;"><img src="data:image/png;base64,{logo_b64}" width="200"></div>', unsafe_allow_html=True)
-        st.markdown("<h1 style='text-align: center; color: #FFFFFF !important;'>MindMetrics</h1>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center; font-size: 1.1rem; color: #E2E8F0 !important; font-weight: 600;'>Platform Analisis Dampak Media Sosial terhadap Kesehatan Mental</p>", unsafe_allow_html=True)
         
         tab_login, tab_register = st.tabs(["MASUK (LOGIN)", "DAFTAR AKUN BARU"])

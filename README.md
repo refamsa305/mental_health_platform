@@ -5,7 +5,7 @@
 ## 🚀 Fitur Utama
 
 1. **Dashboard Analisis Dataset Makro**: 
-   Menjawab 7 pertanyaan bisnis utama mengenai interaksi antara durasi waktu layar (*screen time*), platform media sosial yang digunakan, serta hubungannya dengan tingkat kecemasan (GAD-7) dan depresi (PHQ-9). Visualisasi disajikan secara interaktif menggunakan grafik.
+   Menjawab beberapa pertanyaan bisnis utama mengenai interaksi antara durasi waktu layar (*screen time*), platform media sosial yang digunakan, serta hubungannya dengan tingkat kecemasan (GAD-7) dan depresi (PHQ-9). Visualisasi disajikan secara interaktif menggunakan grafik.
 2. **Kalkulator Prediksi Skor Klinis**: 
    Menggunakan model Machine Learning yang telah dilatih untuk memprediksi probabilitas tingkat kecemasan (GAD-7) dan depresi (PHQ-9) pengguna secara instan berdasarkan pola konsumsi gawai.
 3. **Laporan Kesehatan Mental Pribadi**: 
