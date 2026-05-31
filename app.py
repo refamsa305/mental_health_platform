@@ -222,7 +222,6 @@ if not st.session_state['logged_in']:
                 login_p = st.text_input("Kata Sandi", type="password", placeholder="Masukkan kata sandi")
                 submit_login = st.form_submit_button("Masuk Sekarang")
             if submit_login:
-                # Perbaikan menggunakan .from_() untuk versi terbaru
                 res = supabase.from_("users").select("*").eq("username", login_u).eq("password", login_p).execute()
                 if len(res.data) > 0:
                     st.session_state['logged_in'] = True
@@ -335,13 +334,14 @@ if menu_pilihan == "📊 1. Analisis Dataset (Dashboard)":
             """, unsafe_allow_html=True
         )
 
-# --- KOMPONEN 2: MESIN PREDIKSI PKL + INPUT TANGGAL ---
+# --- KOMPONEN 2: MESIN PREDIKSI DENGAN FILE .PKL ---
 elif menu_pilihan == "🤖 2. Prediksi Skor GAD-7 & PHQ-9":
     st.title("🤖 Kalkulator Prediksi Skor Klinis")
     st.write("Masukkan parameter harian Anda beserta tanggal pencatatan untuk memprediksi tingkat indikasi kecemasan dan depresi.")
     st.write("")
 
     try:
+        # PANGGILAN MODEL DARI FILE .PKL PILIHAN ANDA
         with open('model_gad7.pkl', 'rb') as f: model_gad = pickle.load(f)
         with open('model_phq9.pkl', 'rb') as f: model_phq = pickle.load(f)
 
@@ -395,21 +395,20 @@ elif menu_pilihan == "🤖 2. Prediksi Skor GAD-7 & PHQ-9":
                 "skor_gad": pred_gad, "keparahan_gad": g_sev,
                 "skor_phq": pred_phq, "keparahan_phq": p_sev, "platform": platform
             }
-            # Perbaikan krusial menggunakan .from_() agar tidak memicu AttributeError
+            # Menggunakan .from_() agar sinkron dengan Supabase terbaru
             supabase.from_("user_reports").insert(report_payload).execute()
             st.balloons()
             st.info(f"✅ Data log tanggal {input_date} sukses disimpan permanen ke Cloud Supabase.")
 
     except FileNotFoundError:
-        st.error("❌ Berkas 'model_gad7.pkl' tidak ditemukan. Jalankan 'train_model.py' terlebih dahulu.")
+        st.error("❌ Berkas 'model_gad7.pkl' atau 'model_phq9.pkl' tidak ditemukan di repositori GitHub Anda.")
 
-# --- KOMPONEN 3: EKSEKUSI 5 PILAR SEKTOR LAPORAN KESEHATAN MENTAL ---
+# --- KOMPONEN 3: LAKUKAN 5 PILAR SEKTOR LAPORAN ---
 elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
     st.title("📋 Rekam Medis & Laporan Dashboard Kesehatan")
     st.write("Halaman pelacakan klinis terintegrasi berdasarkan data log aktivitas digital Anda.")
     st.write("")
 
-    # Perbaikan menarik data riwayat menggunakan .from_() kustom v2
     res_reports = supabase.from_("user_reports").select("*").eq("username", st.session_state['username']).execute()
     
     if len(res_reports.data) > 0:
@@ -419,23 +418,15 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
         
         last_record = user_df.iloc[-1]
 
-        # 📌 PILAR 1: RINGKASAN STATUS KONDISI KLINIS TERBARU
+        # 📌 PILAR 1
         st.markdown("### 🗂️ 1. Ringkasan Status Kesehatan Mental Terakhir")
         with st.container(border=True):
             stat_c1, stat_c2, stat_c3 = st.columns(3)
             with stat_c1: st.metric(label="Tanggal Pengujian Terakhir", value=last_record['tanggal'].strftime('%Y-%m-%d'))
             with stat_c2: st.metric(label="Tingkat Kecemasan (GAD-7)", value=f"{last_record['skor_gad']} / 21", delta=last_record['keparahan_gad'], delta_color="inverse")
             with stat_c3: st.metric(label="Tingkat Depresi (PHQ-9)", value=f"{last_record['skor_phq']} / 27", delta=last_record['keparahan_phq'], delta_color="inverse")
-            
-            st.write("")
-            if "Severe" in [last_record['keparahan_gad'], last_record['keparahan_phq']] or "Moderately Severe" in last_record['keparahan_phq']:
-                st.error("🚨 **Rekomendasi Klinis:** Skor Anda berada di zona kritis. Kami sangat menyarankan Anda untuk segera mengambil jeda total dari media sosial (*Digital Detox*) atau menjadwalkan sesi konsultasi dengan psikolog profesional.")
-            elif "Moderate" in [last_record['keparahan_gad'], last_record['keparahan_phq']]:
-                st.warning("⚠️ **Rekomendasi Klinis:** Gejala kecemasan/depresi Anda berada di tingkat sedang. Cobalah batasi screen time maksimal 2 jam per hari.")
-            else:
-                st.success("🌱 **Rekomendasi Klinis:** Kondisi psikologis Anda saat ini relatif stabil dan aman. Tetap pertahankan kesadaran (*mindfulness*) dalam mengonsumsi gawai digital.")
 
-        # 📌 PILAR 2: PELACAKAN TREN TEMPORAL (TIME-SERIES)
+        # 📌 PILAR 2
         st.write("")
         st.markdown("### 📈 2. Pelacakan Tren Fluktuasi Skor Mental dari Hari ke Hari")
         col_l2_v, col_l2_e = st.columns(2)
@@ -445,9 +436,9 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
                 fig_l2.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
                 st.plotly_chart(fig_l2, use_container_width=True)
         with col_l2_e:
-            st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Interpretasi Grafik Kronologis</h4><p style="color: #1565C0 !important; line-height: 1.6;"><b>Melacak Dinamika Emosi:</b> Grafik garis kontinuitas di samping memetakan naik-turunnya kondisi emosional Anda berdasarkan data seketika dari cloud Supabase.</p></div>', unsafe_allow_html=True)
+            st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Interpretasi Grafik Kronologis</h4><p style="color: #1565C0 !important; line-height: 1.6;">Memantau fluktuasi skor klinis digital yang langsung terintegrasi dengan tabel Supabase.</p></div>', unsafe_allow_html=True)
 
-        # 📌 PILAR 3: ANALISIS AKAR MASALAH (SOCIAL COMPARISON TRIGGER)
+        # 📌 PILAR 3
         st.write("")
         st.markdown("### 🎯 3. Analisis Dampak Insecure / Membandingkan Diri")
         col_l3_v, col_l3_e = st.columns(2)
@@ -458,9 +449,9 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
                 fig_l3.update_layout(plot_bgcolor='#FFFFFF', paper_bgcolor='#FFFFFF', margin=dict(l=10, r=10, t=10, b=10))
                 st.plotly_chart(fig_l3, use_container_width=True)
         with col_l3_e:
-            st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Analisis Faktor Pemicu</h4><p style="color: #1565C0 !important; line-height: 1.6;"><b>Dampak Psikologis Insecure:</b> Diagram ini membuktikan secara nyata seberapa besar rata-rata kecemasan melesat naik saat Anda terjebak membandingkan diri di lini masa media sosial.</p></div>', unsafe_allow_html=True)
+            st.markdown('<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Analisis Faktor Pemicu</h4><p style="color: #1565C0 !important; line-height: 1.6;">Melihat korelasi aktivitas insecure di media sosial terhadap grafik rata-rata kecemasan user.</p></div>', unsafe_allow_html=True)
 
-        # 📌 PILAR 4: EVALUASI HABIT (SCREEN TIME VS TIDUR)
+        # 📌 PILAR 4
         st.write("")
         st.markdown("### ⏱️ 4. Pengaruh Waktu Layar (Screen Time) terhadap Durasi Tidur")
         col_l4_v, col_l4_e = st.columns(2)
@@ -472,9 +463,9 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
         with col_l4_e:
             avg_screen = round(user_df['screen_time'].mean(), 1)
             avg_sleep = round(user_df['waktu_tidur'].mean(), 1)
-            st.markdown(f'<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Analisis Dampak Gaya Hidup</h4><p style="color: #1565C0 !important; line-height: 1.6;"><b>Korelasi Kebiasaan Istirahat:</b> Saat ini rata-rata screen time harian Anda berada di angka <b>{avg_screen} Jam</b> dengan durasi tidur <b>{avg_sleep} Jam</b> harian. Menjaga keseimbangan kedua variabel ini adalah kunci kestabilan emosi.</p></div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Analisis Dampak Gaya Hidup</h4><p style="color: #1565C0 !important; line-height: 1.6;">Rata-rata screen time harian Anda berada di angka <b>{avg_screen} Jam</b> dengan durasi tidur <b>{avg_sleep} Jam</b>.</p></div>', unsafe_allow_html=True)
 
-        # 📌 PILAR 5: PROFIL RISIKO PER PLATFORM MEDSOS
+        # 📌 PILAR 5
         st.write("")
         st.markdown("### 🏛️ 5. Pemetaan Profil Risiko Gangguan Depresi per Platform")
         col_l5_v, col_l5_e = st.columns(2)
@@ -486,9 +477,9 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
                 st.plotly_chart(fig_l5, use_container_width=True)
         with col_l5_e:
             max_toxic = platform_df.sort_values(by='skor_phq', ascending=False).iloc[0]['platform'] if not platform_df.empty else "Belum Diketahui"
-            st.markdown(f'<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Deteksi Ekosistem Berisiko</h4><p style="color: #1565C0 !important; line-height: 1.6;"><b>Identifikasi Dampak Algoritma:</b> Berdasarkan riwayat data log Anda, ekosistem pada platform <b>{max_toxic}</b> memicu kecenderungan rata-rata skor depresi tertinggi dibandingkan platform lainnya.</p></div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="background-color: #E3F2FD; padding: 24px; border-radius: 14px; border: 1px solid #BBDEFB;"><h4 style="color: #0D47A1 !important; margin-bottom: 15px;">💡 Deteksi Ekosistem Berisiko</h4><p style="color: #1565C0 !important; line-height: 1.6;">Platform <b>{max_toxic}</b> terdeteksi memberikan porsi nilai depresi tertinggi bagi psikologis Anda harian.</p></div>', unsafe_allow_html=True)
 
-        # DETAIL TABEL LOG REKAM MEDIS HISTORIS
+        # DETAIL TABEL LOG REKAM MEDIS
         st.write("")
         st.markdown("### 🗃️ Riwayat Log Rekam Medis Digital Lengkap")
         with st.container(border=True):
@@ -501,8 +492,8 @@ elif menu_pilihan == "📋 3. Laporan Kesehatan Mental Saya":
         st.markdown(
             """
             <div style="background-color: rgba(255,255,255,0.92); border: 2px dashed #7F8C8D; padding: 40px; border-radius: 14px; text-align: center;">
-                <h3 style="color: #7F8C8D !important;">Belum Ada Riwayat Laporan Terbaca</h3>
-                <p style="color: #7F8C8D !important;">Sistem mendeteksi profil Anda belum pernah melakukan pengisian kuesioner harian.<br>Silakan berpindah ke menu <b>🤖 2. Prediksi Skor GAD-7 & PHQ-9</b> terlebih dahulu untuk menghitung prediksi dan membuat rekam laporan pertama Anda!</p>
+                <h3>Belum Ada Riwayat Laporan Terbaca</h3>
+                <p>Silakan isi log kuesioner terlebih dahulu di menu nomor 2 untuk membuat rekam medis pertama Anda.</p>
             </div>
             """, unsafe_allow_html=True
         )

@@ -2,6 +2,5 @@ streamlit
 supabase
 pandas
 numpy
-scikit-learn
+scikit-learn==1.5.2
 plotly
-python-dotenv
