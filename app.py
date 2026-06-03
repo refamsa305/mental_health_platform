@@ -345,7 +345,9 @@ if menu_pilihan == "1. Analisis Dataset (Dashboard)":
                 <h4 style="color: #0D47A1 !important; margin-bottom: 12px;">💡 Pertanyaan Bisnis & Jawaban Analisis</h4>
                 <p style="color: #1565C0 !important; line-height: 1.6; margin: 0;">
                     <b>Pertanyaan Bisnis:</b> Media sosial manakah yang memiliki rata-rata skor indikasi depresi (PHQ-9) tertinggi di antara pengguna?<br><br>
-                    <b>Jawaban & Interpretasi:</b> Platform berbasis visual dinamis dan berdurasi pendek seperti <b>TikTok dan Instagram</b> menduduki peringkat teratas penyumbang rata-rata skor depresi tertinggi harian. Hal ini mengindikasikan bahwa jenis konsumsi konten cepat memicu kelelahan mental lebih tinggi dibanding platform berbasis teks atau jejaring profesional.
+                    <b>Jawaban & Interpretasi:</b> Berdasarkan grafik batang yang disajikan, Snapchat menduduki peringkat teratas dengan rata-rata skor indikasi depresi (PHQ-9) tertinggi, diikuti secara ketat oleh LinkedIn di posisi kedua. Sebaliknya, TikTok justru berada di posisi paling rendah di antara platform yang dianalisis.
+
+Namun, jika ditinjau dari skala sumbu Y, rata-rata skor PHQ-9 untuk seluruh platform berada di rentang yang sangat sempit dan seragam, yaitu berkisar antara 5,2 hingga 5,5 (tergolong dalam kategori depresi ringan). Hal ini mengindikasikan bahwa tidak terdapat perbedaan penyumbang skor depresi yang signifikan antar platform; baik platform berbasis visual, teks, maupun jejaring profesional memiliki dampak psikologis yang relatif serupa pada pengguna di dalam dataset ini.
                 </p>
             </div>
         """, unsafe_allow_html=True)
